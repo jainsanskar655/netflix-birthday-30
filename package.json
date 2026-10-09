@@ -1,0 +1,9 @@
+{
+  "name": "netflix-birthday",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Netflix-style interactive birthday site with a shared (Netlify Blobs) content store.",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

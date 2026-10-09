@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#141414" />
+<title>Sagar — 30</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141414'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='900' fill='%23e50914' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ============ 1. SPLASH / INTRO ============ -->
+<div id="splash" class="splash">
+  <video id="splashVideo" class="splash-video" src="assets/videos/netflix-intro.mp4" playsinline preload="auto" muted></video>
+  <div class="splash-gate" id="splashGate">
+    <div class="netflix-word">NETFLIX</div>
+    <button class="splash-btn" id="splashStart" type="button">▶&nbsp; Tap to enter</button>
+    <p class="splash-note">Turn your sound on 🔊</p>
+  </div>
+</div>
+
+<!-- ============ 2. LOGIN ============ -->
+<div id="login" class="gate hidden">
+  <div class="login-bg"></div>
+  <header class="login-top"><div class="netflix-word sm">NETFLIX</div></header>
+  <main class="login-card">
+    <h1>Sign In</h1>
+    <form id="loginForm">
+      <input id="loginEmail" type="text" placeholder="Email or phone number" autocomplete="username" />
+      <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" />
+      <button type="submit" class="login-cta">Sign In</button>
+    </form>
+    <div class="login-row"><label><input type="checkbox" checked> Remember me</label><a href="#">Need help?</a></div>
+    <p class="login-signup">New to Netflix? <a href="#" id="loginSkip">Sign up now</a>.</p>
+    <p class="login-captcha">This page is protected by love to keep the birthday safe. <a href="#" id="loginSkip2">Skip →</a></p>
+  </main>
+</div>
+
+<!-- ============ 3. WHO'S WATCHING ============ -->
+<div id="profiles" class="gate hidden">
+  <header class="profiles-top"><div class="netflix-word sm">NETFLIX</div></header>
+  <div class="profiles-inner">
+    <h1 id="profilesTitle">Who's watching?</h1>
+    <div class="profiles-grid" id="profilesGrid"></div>
+    <button class="manage-btn" id="manageBtn">Manage Profiles</button>
+  </div>
+</div>
+
+<!-- ============ 4. BROWSE ============ -->
+<div id="app" class="hidden">
+  <header id="nav">
+    <div class="nav-left">
+      <a class="wordmark" data-nav="home">NETFLIX</a>
+      <nav class="nav-links">
+        <a data-nav="home" class="active">Home</a>
+        <a data-nav="wishes">Birthday Wishes</a>
+        <a data-nav="roast">The Roast</a>
+        <a data-nav="tops">Top 10</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" id="searchBtn" title="Search">⌕</button>
+      <div class="nav-notify" id="navNotify" title="Notifications">🔔<span class="dot"></span></div>
+      <button class="avatar" id="avatarBtn" title="Profile">S</button>
+    </div>
+  </header>
+
+  <main id="home" class="page">
+    <section class="hero" id="hero">
+      <div class="hero-shade"></div>
+      <div class="hero-vignette"></div>
+      <div class="hero-copy">
+        <div class="tiny"><span class="n-badge">N</span> ORIGINAL</div>
+        <h1 class="hero-title" id="heroTitle">SAGAR</h1>
+        <div class="hero-meta" id="heroMeta"></div>
+        <p class="hero-desc" id="heroDesc"></p>
+        <div class="hero-actions">
+          <button class="btn-play" id="heroPlay">▶&nbsp; Play</button>
+          <button class="btn-more" id="heroMore">ⓘ&nbsp; More Info</button>
+        </div>
+      </div>
+      <button class="hero-mute" id="heroMute" title="Toggle sound">🔇</button>
+    </section>
+    <section class="rows" id="rows"></section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with ❤️ for <b id="footName">Sagar</b>'s 30th birthday · <span id="footDate"></span></p>
+    <div class="foot-links">
+      <a href="#">Audio Description</a><a href="#">Help Centre</a><a href="#">Gift Cards</a>
+      <a href="#">Terms of Use</a><a href="#">Privacy</a><a href="#">Contact Us</a>
+    </div>
+    <p class="foot-copy">A Netflix Birthday Original · Not affiliated with Netflix</p>
+  </footer>
+</div>
+
+<!-- ============ 5. DETAIL OVERLAY (title page) ============ -->
+<div id="detail" class="overlay">
+  <button class="overlay-close" id="detailClose">✕</button>
+  <div class="detail-scroll">
+    <div class="detail-hero" id="detailHero">
+      <video id="detailPreview" class="detail-preview" muted loop playsinline></video>
+      <div class="detail-hero-shade"></div>
+      <div class="detail-hero-copy">
+        <div class="detail-logo" id="detailLogo">SAGAR</div>
+        <div class="hero-actions">
+          <button class="btn-play" id="detailPlay">▶&nbsp; Play</button>
+          <button class="btn-circle" id="detailAdd" title="My List">＋</button>
+          <button class="btn-circle" id="detailLike" title="Like">👍</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-cols">
+        <div class="detail-left">
+          <div class="detail-metarow" id="detailMeta"></div>
+          <p class="detail-desc" id="detailDesc"></p>
+        </div>
+        <div class="detail-right" id="detailFacts"></div>
+      </div>
+
+      <div class="tabs" id="detailTabs">
+        <button data-tab="overview" class="active">OVERVIEW</button>
+        <button data-tab="episodes">EPISODES</button>
+        <button data-tab="more">MORE LIKE THIS</button>
+        <button data-tab="about">DETAILS</button>
+      </div>
+
+      <div class="tab-panels">
+        <div class="tab-panel" data-panel="overview">
+          <h3 class="season-label" id="overviewSeason"></h3>
+          <div class="episode-list" id="overviewEpisodes"></div>
+        </div>
+        <div class="tab-panel hidden" data-panel="episodes">
+          <div class="season-bar">
+            <label>Seasons</label>
+            <select id="seasonSelect"></select>
+          </div>
+          <div class="episode-list" id="episodeList"></div>
+        </div>
+        <div class="tab-panel hidden" data-panel="more">
+          <div class="more-grid" id="moreGrid"></div>
+        </div>
+        <div class="tab-panel hidden" data-panel="about">
+          <div class="about-grid" id="aboutGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 6. VIDEO PLAYER OVERLAY ============ -->
+<div id="player" class="overlay player-overlay">
+  <video id="playerVideo" class="player-video" playsinline></video>
+
+  <div class="player-ui" id="playerUI">
+    <div class="player-top">
+      <button class="p-back" id="pBack" title="Back">‹</button>
+      <button class="p-episodes" id="pEpisodes"><span>Episodes</span> ☰</button>
+      <div class="p-title" id="pTitle">S1:E1 "Wish"</div>
+      <button class="p-audio" id="pAudio">Audio &amp; Subtitles</button>
+      <button class="p-cast" id="pCast" title="Cast">◫</button>
+    </div>
+
+    <div class="player-center">
+      <button class="p-skip" id="pBack10" title="Back 10 seconds"><span class="p-ring"></span><span class="p-arrow">⟲</span><b>10</b></button>
+      <button class="p-play" id="pPlay" title="Play/Pause"><span id="pPlayIcon">❚❚</span></button>
+      <button class="p-skip" id="pFwd10" title="Forward 10 seconds"><span class="p-ring"></span><span class="p-arrow">⟳</span><b>10</b></button>
+    </div>
+
+    <div class="player-bottom">
+      <div class="p-next-row">
+        <button class="p-next hidden" id="pNext">Next Episode <b id="pNextNum">▸</b></button>
+      </div>
+      <div class="p-progress">
+        <div class="p-time" id="pCurrent">0:00</div>
+        <div class="p-bar" id="pBarWrap"><div class="p-bar-buffer" id="pBuffer"></div><div class="p-bar-fill" id="pFill"></div><div class="p-bar-knob" id="pKnob"></div></div>
+        <div class="p-time right" id="pDuration">0:00</div>
+      </div>
+      <div class="p-controls">
+        <div class="p-left-ctrls">
+          <button class="p-ctrl" id="pMute" title="Mute">🔊</button>
+          <div class="p-vol" id="pVolWrap"><div class="p-vol-fill" id="pVolFill"></div></div>
+          <button class="p-ctrl wide" id="pAudioBtn">Audio &amp; Subtitles</button>
+        </div>
+        <div class="p-right-ctrls">
+          <button class="p-ctrl" id="pSubs" title="Subtitles">CC</button>
+          <button class="p-ctrl" id="pFullscreen" title="Fullscreen">⛶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="player-center-big" id="playerCenterBig">▶</div>
+  <div class="player-episodes-drawer" id="episodesDrawer">
+    <div class="drawer-head"><b>Episodes</b><button id="drawerClose">✕</button></div>
+    <div class="drawer-list" id="drawerList"></div>
+  </div>
+</div>
+
+<!-- ============ 7. SEARCH OVERLAY ============ -->
+<div id="search" class="overlay search-overlay">
+  <div class="search-head">
+    <span class="search-ico">⌕</span>
+    <input id="searchInput" placeholder="Titles, people, genres" />
+    <button class="overlay-close-inline" id="searchClose">✕</button>
+  </div>
+  <div class="search-results" id="searchResults"></div>
+</div>
+
+<!-- ============ 8. ADMIN MODE (Ctrl+A+S) ============ -->
+<div id="admin" class="overlay admin-overlay">
+  <div class="admin-panel">
+    <header class="admin-head">
+      <h2>⚙️ Configure Mode</h2>
+      <div class="admin-head-actions">
+        <button class="admin-btn ghost" id="adminExport">⬇ Export</button>
+        <button class="admin-btn ghost" id="adminImportBtn">⬆ Import</button>
+        <input type="file" id="adminImport" accept="application/json" hidden />
+        <button class="admin-btn danger" id="adminReset">Reset</button>
+        <button class="admin-btn" id="adminClose">✕ Close</button>
+      </div>
+    </header>
+    <div class="admin-body">
+      <section class="admin-col">
+        <h3>Add a birthday wish</h3>
+        <form id="wishForm" class="admin-form">
+          <label>Title / Who is it from?</label>
+          <input id="wTitle" required placeholder="e.g. A message from Mom" />
+          <label>Upload video</label>
+          <input id="wVideo" type="file" accept="video/*" />
+          <div class="or">— or paste a video URL —</div>
+          <input id="wVideoUrl" placeholder="https://... or assets/videos/play1.mp4" />
+          <label>Upload thumbnail (optional)</label>
+          <input id="wThumb" type="file" accept="image/*" />
+          <label>Description</label>
+          <textarea id="wDesc" rows="3" placeholder="What would you like to say?"></textarea>
+          <div class="grid2">
+            <div><label>Season</label><input id="wSeason" type="number" min="1" value="1" /></div>
+            <div><label>Episode</label><input id="wEpisode" type="number" min="1" value="1" /></div>
+          </div>
+          <label>Which row should it appear in?</label>
+          <select id="wRow"></select>
+          <button type="submit" class="admin-btn primary">＋ Add to library</button>
+        </form>
+        <div class="admin-progress" id="adminProgress"></div>
+      </section>
+
+      <section class="admin-col">
+        <h3>Library (<span id="admCount">0</span>)</h3>
+        <div class="admin-list" id="adminList"></div>
+      </section>
+    </div>
+    <p class="admin-hint">Tip: press <kbd>Ctrl</kbd>+<kbd>A</kbd>+<kbd>S</kbd> anywhere to open/close this. Uploaded videos are saved in this browser (works offline).</p>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/content.js"></script>
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# Local reference / source files not needed for the deployed site
+/index (1).html
+/index (2).html
+/Overlay-Netflix-Template-PNG-Image.png
+/ref- vidoe overlay.png
+/who's watching template.webp
+/play1.mp4
+/vidssave.com Netflix Intro (1080p) (Download) 1080p.mp4
+/vidssave.com Netflix New Logo Animation 2019 1080p.mp4
+
+# Netlify / tooling
+.netlify/
+node_modules/
+.DS_Store
+Thumbs.db
