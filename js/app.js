@@ -495,7 +495,21 @@
     p.video.addEventListener("play", function () { p.playIcon.textContent = "❚❚"; showUI(); });
     p.video.addEventListener("pause", function () { p.playIcon.textContent = "▶"; showUI(true); });
     p.video.addEventListener("ended", onEnded);
-    p.video.addEventListener("click", togglePlay);
+    var clickTimer = null;
+    p.video.addEventListener("click", function () {
+      if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; return; }
+      clickTimer = setTimeout(function () { clickTimer = null; togglePlay(); }, 220);
+    });
+    p.video.addEventListener("dblclick", function (e) {
+      e.preventDefault();
+      if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+      toggleFullscreen();
+    });
+    $("#pEnhance").onclick = function () {
+      var off = p.overlay.classList.toggle("soft");
+      toast(off ? "Enhancement off" : "Enhancement on");
+      showUI();
+    };
 
     p.bar.addEventListener("mousedown", function (e) { p.dragging = true; scrub(e); });
     window.addEventListener("mousemove", function (e) { if (p.dragging) scrub(e); });
@@ -526,7 +540,7 @@
     if (r > 0.02 && r < 0.98) { try { p.video.currentTime = r * (p.video.duration || 0); } catch (e) { } }
     buildDrawer(ep);
     updateNext();
-    showUI(true);
+    showUI();
     document.title = episodeLabel(item, ep);
   }
   function buildDrawer(activeEp) {
@@ -563,11 +577,14 @@
   }
   function showUI(sticky) {
     p.ui.classList.remove("hide");
+    p.overlay.classList.remove("hide-cursor");
     clearTimeout(p.hideTimer);
-    if (sticky) return;
     p.hideTimer = setTimeout(function () {
-      if (!p.video.paused && p.overlay.classList.contains("open") && !$("#episodesDrawer").classList.contains("open")) p.ui.classList.add("hide");
-    }, 3200);
+      if (!p.video.paused && p.overlay.classList.contains("open") && !$("#episodesDrawer").classList.contains("open")) {
+        p.ui.classList.add("hide");
+        p.overlay.classList.add("hide-cursor");
+      }
+    }, sticky ? 4000 : 2800);
   }
   function onTime() {
     var v = p.video;
