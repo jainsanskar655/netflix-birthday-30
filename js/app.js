@@ -382,7 +382,7 @@
     $("#detailFacts").innerHTML =
       "<div><b>Starring:</b> " + esc((item.starring || []).join(", ")) + "</div>" +
       "<div><b>Genres:</b> " + esc((item.genres || []).join(", ")) + "</div>" +
-      "<div><b>Created by:</b> " + esc(item.creator || item.from || "SAGARFLIX") + "</div>";
+      "<div><b>Created by:</b> " + esc(item.creator || item.from || "Netflix") + "</div>";
     renderOverview(item);
     renderSeasons(item);
     renderEpisodeList(item, 1);

@@ -1,5 +1,5 @@
 /* ===============================================================
-   SAGARFLIX — Birthday styles
+   Netflix Birthday — styles
    =============================================================== */
 :root{
   --red:#e50914;
@@ -14,7 +14,7 @@
   --radius:6px;
   --nav-h:68px;
   --shadow:0 8px 30px rgba(0,0,0,.7);
-  --font:"Sagarflix Sans","Helvetica Neue",Helvetica,Arial,"Segoe UI",Roboto,sans-serif;
+  --font:"Netflix Sans","Helvetica Neue",Helvetica,Arial,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
@@ -26,7 +26,7 @@ img,video{display:block;max-width:100%}
 kbd{background:#333;border-radius:3px;padding:1px 5px;font-size:11px;border:1px solid #555}
 
 /* ---------- wordmark & buttons ---------- */
-.netflix-word,.wordmark{color:var(--red);font-weight:900;letter-spacing:-.06em;font-family:"Sagarflix Sans",Arial,sans-serif;line-height:1;user-select:none}
+.netflix-word,.wordmark{color:var(--red);font-weight:900;letter-spacing:-.06em;font-family:"Netflix Sans",Arial,sans-serif;line-height:1;user-select:none}
 .wordmark{font-size:30px;text-shadow:0 0 18px rgba(229,9,20,.35)}
 .btn-play{background:#fff;color:#000;border:0;padding:12px 26px;border-radius:4px;font-size:16px;font-weight:800;display:inline-flex;align-items:center;gap:8px;transition:.15s}
 .btn-play:hover{background:rgba(255,255,255,.78)}
