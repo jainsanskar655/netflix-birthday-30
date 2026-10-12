@@ -2,6 +2,7 @@ import { getStore } from "@netlify/blobs";
 
 const STORE = "birthday-media";
 const MAX_CHUNK = 5 * 1024 * 1024; // 5 MB per part (Netlify request limit is ~6 MB)
+const MAX_SERVE = 2 * 1024 * 1024; // cap each response so we never read/return a whole file at once
 
 function cors(extra) {
   return Object.assign(
@@ -54,38 +55,48 @@ export default async (req) => {
       if (!total) return json({ error: "missing total" }, 400);
       const meta = { id, total, chunk, count, type, name, created: Date.now() };
       await store.set(`${id}/meta`, JSON.stringify(meta));
-      return json({ ok: true, key: id, url: `/api/media?id=${encodeURIComponent(id)}`, meta });
+      const qs = `id=${encodeURIComponent(id)}&t=${total}&c=${chunk}&n=${count}&ty=${encodeURIComponent(type)}`;
+      return json({ ok: true, key: id, url: `/api/media?${qs}`, meta });
     }
 
     /* -------- serve (with HTTP range support) -------- */
-    if (method === "GET" && id) {
-      const metaRaw = await store.get(`${id}/meta`);
-      if (!metaRaw) return new Response("Not found", { status: 404, headers: cors() });
-      const meta = JSON.parse(metaRaw);
-      const total = meta.total;
-      const chunk = meta.chunk;
-      const count = meta.count;
-      const type = meta.type || "application/octet-stream";
+    if ((method === "GET" || method === "HEAD") && id) {
+      const pTotal = Number(url.searchParams.get("t") || 0);
+      const pChunk = Number(url.searchParams.get("c") || 0);
+      const pCount = Number(url.searchParams.get("n") || 0);
+      const pType = url.searchParams.get("ty") || "";
+      let total, chunk, count, type;
+      if (pTotal > 0 && pChunk > 0 && pCount > 0) {
+        total = pTotal; chunk = pChunk; count = pCount; type = pType || "video/mp4";
+      } else {
+        const metaRaw = await store.get(`${id}/meta`);
+        if (!metaRaw) return new Response("Not found", { status: 404, headers: cors() });
+        const meta = JSON.parse(metaRaw);
+        total = meta.total; chunk = meta.chunk; count = meta.count; type = meta.type || "application/octet-stream";
+      }
 
       const range = req.headers.get("range");
       let start = 0;
       let end = total - 1;
-      let status = 200;
+      let hasRange = false;
       if (range) {
         const m = /bytes=(\d*)-(\d*)/.exec(range);
         if (m) {
+          hasRange = true;
           if (m[1] !== "") start = parseInt(m[1], 10);
           if (m[2] !== "") end = parseInt(m[2], 10);
-          else if (m[1] !== "") end = total - 1;
           if (isNaN(start)) start = 0;
-          if (isNaN(end)) end = total - 1;
+          if (m[2] === "" || isNaN(end)) end = total - 1;
           if (start > end || start >= total) {
             return new Response(null, { status: 416, headers: cors({ "content-range": `bytes */${total}` }) });
           }
-          if (end >= total) end = total - 1;
-          status = 206;
         }
       }
+      if (end >= total) end = total - 1;
+      /* cap the response: browsers ask for "bytes=0-" (whole file) — serve a small
+         slice instead so large videos stream fast and stay under the function limit */
+      if (end - start + 1 > MAX_SERVE) end = start + MAX_SERVE - 1;
+      const status = (hasRange || end < total - 1) ? 206 : 200;
 
       const firstPart = Math.floor(start / chunk);
       const lastPart = Math.floor(end / chunk);
@@ -110,6 +121,7 @@ export default async (req) => {
         out.set(piece, off);
         off += piece.length;
       }
+      if (out.length === 0) return new Response("Not found", { status: 404, headers: cors() });
       const h = cors({
         "content-type": type,
         "content-length": String(out.length),
@@ -117,7 +129,7 @@ export default async (req) => {
         "cache-control": "public, max-age=31536000, immutable",
       });
       if (status === 206) h["content-range"] = `bytes ${start}-${end}/${total}`;
-      return new Response(out, { status, headers: h });
+      return new Response(method === "HEAD" ? null : out, { status, headers: h });
     }
 
     /* -------- delete -------- */

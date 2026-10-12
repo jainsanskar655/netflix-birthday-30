@@ -463,7 +463,9 @@
     p.fill = $("#pFill"); p.buf = $("#pBuffer"); p.knob = $("#pKnob"); p.bar = $("#pBarWrap");
     p.cur = $("#pCurrent"); p.dur = $("#pDuration"); p.title = $("#pTitle");
     p.play = $("#pPlay"); p.playIcon = $("#pPlayIcon");
-    p.hideTimer = null; p.dragging = false;
+    p.loading = $("#pLoading");
+    p.hideTimer = null; p.dragging = false; p.loadedKey = null;
+    var setLoading = function (on) { if (p.loading) p.loading.classList.toggle("show", !!on); };
 
     $("#pBack").onclick = closePlayer;
     p.play.onclick = togglePlay;
@@ -482,6 +484,14 @@
     p.video.addEventListener("timeupdate", onTime);
     p.video.addEventListener("progress", onProgress);
     p.video.addEventListener("loadedmetadata", onMeta);
+    p.video.addEventListener("loadstart", function () { setLoading(true); });
+    p.video.addEventListener("waiting", function () { setLoading(true); });
+    p.video.addEventListener("stalled", function () { setLoading(true); });
+    p.video.addEventListener("playing", function () { setLoading(false); });
+    p.video.addEventListener("canplay", function () { setLoading(false); });
+    p.video.addEventListener("canplaythrough", function () { setLoading(false); });
+    p.video.addEventListener("seeked", function () { setLoading(false); });
+    p.video.addEventListener("error", function () { setLoading(false); });
     p.video.addEventListener("play", function () { p.playIcon.textContent = "❚❚"; showUI(); });
     p.video.addEventListener("pause", function () { p.playIcon.textContent = "▶"; showUI(true); });
     p.video.addEventListener("ended", onEnded);
@@ -506,7 +516,8 @@
 
     var dpv = $("#detailPreview"); try { dpv.pause(); } catch (e) { }
     p.title.innerHTML = esc(episodeLabel(item, ep));
-    p.video.src = srcOf(ep);
+    try { p.video.poster = thumbOf(item) || ""; p.video.preload = "auto"; } catch (e) { }
+    if (p.loadedKey !== ep.id) { p.video.src = srcOf(ep); p.loadedKey = ep.id; }
     var r = prog(ep.id);
     p.overlay.classList.add("open");
     document.body.style.overflow = "hidden";

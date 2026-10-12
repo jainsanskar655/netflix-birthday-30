@@ -229,6 +229,10 @@ kbd{background:#333;border-radius:3px;padding:1px 5px;font-size:11px;border:1px 
 .player-overlay{background:#000;display:none;z-index:90}
 .player-overlay.open{display:block}
 .player-video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.p-loading{position:absolute;inset:0;display:none;place-items:center;pointer-events:none;z-index:6}
+.p-loading.show{display:grid}
+.p-spin{width:56px;height:56px;border-radius:50%;border:4px solid rgba(255,255,255,.22);border-top-color:var(--red);animation:pspin .8s linear infinite}
+@keyframes pspin{to{transform:rotate(360deg)}}
 .player-ui{position:absolute;inset:0;z-index:3;opacity:1;transition:opacity .35s;background:linear-gradient(180deg,rgba(0,0,0,.75),transparent 22%),linear-gradient(0deg,rgba(0,0,0,.85),transparent 30%)}
 .player-ui.hide{opacity:0;pointer-events:none}
 .player-ui.hide .player-center{pointer-events:none}
