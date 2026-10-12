@@ -26,6 +26,44 @@ window.DEFAULT_CONTENT = {
   /* Featured title on the home hero */
   hero: "main",
 
+  /* "His Story" screen — a scrolling story page (editable in Configure Mode) */
+  story: {
+    navLabel: "His Story",
+    hero: {
+      title: "Spoiler: Your Next Favourite is Here",
+      subtitle: "Sagar Turns 30",
+      tagline: "The 20s were for figuring it out. The 30s are for getting rich.",
+      image: null,
+      imageKey: null
+    },
+    why: {
+      title: "Why Does He Exist",
+      body: "Thirty years of stories, adventures, friendships, chaos, laughter and countless moments that made you who you are today. The 20s were all about figuring things out — making mistakes, finding your people, chasing dreams and creating memories along the way.\n\nBut now comes the exciting part: your 30s. The decade where the hard work starts paying off, the dreams get bigger, the bank balance gets happier, and life finally starts feeling a little more like the life you imagined.\n\nHere's to more love, more laughter, more adventures, more money, and a whole lot of unforgettable stories. The trailer was great, but the best part of your story is just beginning."
+    },
+    reasons: {
+      title: "Reasons We Love You",
+      items: [
+        { id: "r1", title: "That laugh", text: "The one that makes everyone else in the room start laughing too.", image: null, imageKey: null },
+        { id: "r2", title: "Always there", text: "No matter the hour or the crisis — you show up.", image: null, imageKey: null },
+        { id: "r3", title: "The big heart", text: "You care more than you let on, and everyone notices.", image: null, imageKey: null },
+        { id: "r4", title: "Terrible jokes", text: "Someone has to tell them, and apparently it's you.", image: null, imageKey: null }
+      ]
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      items: [
+        { id: "f1", q: "Is Sagar actually 30?", a: "Unfortunately, yes. The evidence was overwhelming — and the candles did not fit on one cake." },
+        { id: "f2", q: "Does he feel 30?", a: "Physically? Sometimes. Spiritually? About 24. Emotionally? Depends on whether it's past his bedtime." },
+        { id: "f3", q: "Will he survive the next decade?", a: "Statistically probable. Emotionally, we make no promises — but he does have us." },
+        { id: "f4", q: "Who is his favourite person?", a: "The list has been left intentionally open. Applications were, apparently, still being reviewed." }
+      ]
+    },
+    quote: {
+      text: "Some people spend 30 years becoming a better version of themselves. You spent 30 years becoming impossible to replace.",
+      by: "Everyone who loves you"
+    }
+  },
+
   /* Horizontal rows on the home page */
   rows: [
     { id: "continue",  title: "Continue Watching for Sagar",        type: "cards",  itemIds: ["main", "w1", "w2", "w3", "w4"] },

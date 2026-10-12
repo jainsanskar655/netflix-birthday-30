@@ -13,3 +13,7 @@
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Dev/test helpers + design references
+/.tools/
+/new screen/

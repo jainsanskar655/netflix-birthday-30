@@ -30,6 +30,10 @@
     if (!o) return "";
     return o.thumb || mediaUrl(o.thumbKey) || "";
   }
+  function picOf(o) {
+    if (!o) return "";
+    return o.image || mediaUrl(o.imageKey) || "";
+  }
   function hueOf(o, seed) {
     if (o && o.hue != null) return o.hue;
     var s = String((o && o.id) || seed || "x");
@@ -146,6 +150,7 @@
     $("#app").classList.remove("hidden");
     var av = $("#avatarBtn"); av.textContent = (p.initial || p.name.charAt(0)).toUpperCase();
     renderAll();
+    showHome();
     window.scrollTo(0, 0);
   }
 
@@ -156,21 +161,30 @@
     $("#avatarBtn").onclick = function () {
       $("#app").classList.add("hidden"); renderProfiles(); $("#profiles").classList.remove("hidden"); window.scrollTo(0, 0);
     };
+    function activate(nav) {
+      $$(".nav-links a").forEach(function (x) { x.classList.toggle("active", x.getAttribute("data-nav") === nav); });
+    }
+    function navTo(nav) {
+      activate(nav);
+      if (nav === "story") { showStory(); return; }
+      showHome();
+      var map = { home: "continue", wishes: "new", roast: "roast", tops: "top10" };
+      if (nav === "home") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+      var row = document.getElementById("row-" + map[nav]);
+      if (row) window.scrollTo({ top: row.offsetTop - 60, behavior: "smooth" });
+      else window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     $$(".nav-links a").forEach(function (a) {
-      a.onclick = function () {
-        $$(".nav-links a").forEach(function (x) { x.classList.remove("active"); });
-        a.classList.add("active");
-        var map = { home: "continue", wishes: "new", roast: "roast", tops: "top10" };
-        var id = map[a.getAttribute("data-nav")];
-        $("#app").classList.remove("hidden");
-        var row = document.getElementById("row-" + id);
-        if (row) window.scrollTo({ top: row.offsetTop - 60, behavior: "smooth" });
-        else window.scrollTo({ top: 0, behavior: "smooth" });
-      };
+      a.onclick = function () { navTo(a.getAttribute("data-nav")); };
     });
+    var wm = $(".wordmark"); if (wm) wm.onclick = function (e) { e.preventDefault(); navTo("home"); };
     $("#heroPlay").onclick = function () { openPlayer(CONTENT.hero, 0); };
     $("#heroMore").onclick = function () { openDetail(CONTENT.hero); };
+    var hs = $("#heroStory"); if (hs) hs.onclick = function () { navTo("story"); };
   }
+
+  function showHome() { var s = $("#story"); if (s) s.classList.add("hidden"); $("#home").classList.remove("hidden"); }
+  function showStory() { renderStory(); $("#home").classList.add("hidden"); $("#story").classList.remove("hidden"); window.scrollTo(0, 0); }
 
   function renderHero() {
     var item = CONTENT.library[CONTENT.hero] || items()[0];
@@ -234,12 +248,75 @@
     });
   }
 
+  function renderStory() {
+    if (!CONTENT) return;
+    var link = $('.nav-links a[data-nav="story"]');
+    var s = CONTENT.story;
+    if (!s) {
+      var w = $("#storyWhyBody"); if (w) w.textContent = "No story yet — press Ctrl + A + S to add one.";
+      return;
+    }
+    if (link) link.textContent = s.navLabel || "His Story";
+
+    var h = s.hero || {};
+    var t = $("#storyHeroTitle"); if (t) t.textContent = h.title || "";
+    var sub = $("#storyHeroSub"); if (sub) sub.textContent = h.subtitle || "";
+    var tag = $("#storyHeroTag"); if (tag) tag.textContent = h.tagline || "";
+    var bg = $("#storyHeroBg");
+    if (bg) {
+      var url = picOf(h);
+      bg.style.background = url
+        ? "linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.78)),url('" + url + "') center/cover"
+        : "linear-gradient(135deg,#2a0a0d,#0b0b0b)";
+    }
+    var cta = $("#storyCta"); if (cta) cta.onclick = function () { openPlayer(CONTENT.hero, 0); };
+
+    var why = s.why || {};
+    var wt = $("#storyWhyTitle"); if (wt) wt.textContent = why.title || "";
+    var wb = $("#storyWhyBody"); if (wb) wb.textContent = why.body || "";
+
+    var rs = s.reasons || {};
+    var rt = $("#storyReasonsTitle"); if (rt) rt.textContent = rs.title || "";
+    var rhost = $("#storyReasons");
+    if (rhost) {
+      rhost.innerHTML = "";
+      (rs.items || []).forEach(function (r) {
+        var u = picOf(r);
+        var card = document.createElement("article");
+        card.className = "story-card" + (u ? "" : " noimg");
+        card.innerHTML =
+          '<div class="sc-img"' + (u ? ' style="background-image:url(\'' + u + '\')"' : "") + "></div>" +
+          '<div class="sc-body"><h4>' + esc(r.title || "") + "</h4><p>" + esc(r.text || "") + "</p></div>";
+        rhost.appendChild(card);
+      });
+    }
+
+    var fq = s.faq || {};
+    var ft = $("#storyFaqTitle"); if (ft) ft.textContent = fq.title || "";
+    var fhost = $("#storyFaq");
+    if (fhost) {
+      fhost.innerHTML = "";
+      (fq.items || []).forEach(function (f) {
+        var it = document.createElement("div");
+        it.className = "faq-item";
+        it.innerHTML = '<button class="faq-q" type="button">' + esc(f.q || "") + '</button><div class="faq-a"><p>' + esc(f.a || "") + "</p></div>";
+        it.querySelector(".faq-q").onclick = function () { it.classList.toggle("open"); };
+        fhost.appendChild(it);
+      });
+    }
+
+    var q = s.quote || {};
+    var qe = $("#storyQuote"); if (qe) qe.textContent = q.text || "";
+    var qb = $("#storyQuoteBy"); if (qb) qb.textContent = q.by || "";
+  }
+
   function renderAll() {
     if (!CONTENT) return;
     $("#footName").textContent = CONTENT.site.name;
     $("#footDate").textContent = CONTENT.site.birthday;
     renderHero();
     renderRows();
+    renderStory();
   }
 
   /* ---------------- detail overlay ---------------- */
@@ -562,6 +639,8 @@
     isCloud: function () { return !!(window.Cloud && Cloud.enabled); },
     refreshMedia: buildMedia,
     renderAll: renderAll,
+    renderStory: renderStory,
+    picOf: picOf,
     media: function () { return MEDIA; },
     openDetail: openDetail,
     closeDetail: closeDetail,

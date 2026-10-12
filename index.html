@@ -55,6 +55,7 @@
       <a class="wordmark" data-nav="home">NETFLIX</a>
       <nav class="nav-links">
         <a data-nav="home" class="active">Home</a>
+        <a data-nav="story">His Story</a>
         <a data-nav="wishes">Birthday Wishes</a>
         <a data-nav="roast">The Roast</a>
         <a data-nav="tops">Top 10</a>
@@ -79,11 +80,51 @@
         <div class="hero-actions">
           <button class="btn-play" id="heroPlay">▶&nbsp; Play</button>
           <button class="btn-more" id="heroMore">ⓘ&nbsp; More Info</button>
+          <button class="btn-more" id="heroStory">📖&nbsp; His Story</button>
         </div>
       </div>
       <button class="hero-mute" id="heroMute" title="Toggle sound">🔇</button>
     </section>
     <section class="rows" id="rows"></section>
+  </main>
+
+  <!-- ============ 4b. HIS STORY (a scrolling story page) ============ -->
+  <main id="story" class="page hidden">
+    <section class="story-hero">
+      <div class="story-hero-bg" id="storyHeroBg"></div>
+      <div class="story-hero-shade"></div>
+      <div class="story-hero-copy">
+        <div class="tiny"><span class="n-badge">N</span> STORY</div>
+        <h1 class="story-hero-title" id="storyHeroTitle"></h1>
+        <div class="story-hero-sub" id="storyHeroSub"></div>
+        <p class="story-hero-tag" id="storyHeroTag"></p>
+        <div class="story-hero-cta">
+          <button class="btn-play" id="storyCta">▶&nbsp; Start the Story</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="story-wrap">
+      <section class="story-section">
+        <h2 class="story-h" id="storyWhyTitle"></h2>
+        <div class="story-body" id="storyWhyBody"></div>
+      </section>
+
+      <section class="story-section">
+        <h2 class="story-h" id="storyReasonsTitle"></h2>
+        <div class="story-grid" id="storyReasons"></div>
+      </section>
+
+      <section class="story-section">
+        <h2 class="story-h" id="storyFaqTitle"></h2>
+        <div class="story-faq" id="storyFaq"></div>
+      </section>
+
+      <section class="story-section story-quote-sec">
+        <blockquote class="story-quote" id="storyQuote"></blockquote>
+        <cite class="story-quote-by" id="storyQuoteBy"></cite>
+      </section>
+    </div>
   </main>
 
   <footer class="site-footer">
@@ -224,7 +265,11 @@
         <button class="admin-btn" id="adminClose">✕ Close</button>
       </div>
     </header>
-    <div class="admin-body">
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-atab="wishes" type="button">🎬 Birthday Wishes</button>
+      <button class="admin-tab" data-atab="story" type="button">📖 His Story</button>
+    </div>
+    <div class="admin-body" data-apane="wishes">
       <section class="admin-col">
         <h3>Add a birthday wish</h3>
         <form id="wishForm" class="admin-form">
@@ -254,7 +299,57 @@
         <div class="admin-list" id="adminList"></div>
       </section>
     </div>
-    <p class="admin-hint">Tip: press <kbd>Ctrl</kbd>+<kbd>A</kbd>+<kbd>S</kbd> anywhere to open/close this. Uploaded videos are saved in this browser (works offline).</p>
+    <div class="admin-body admin-story hidden" data-apane="story" id="adminStory">
+      <section class="admin-col">
+        <h3>His Story — page</h3>
+        <form id="storyForm" class="admin-form">
+          <label>Nav label</label>
+          <input id="stNav" placeholder="His Story" />
+
+          <label>Hero title</label>
+          <input id="stHeroTitle" placeholder="Spoiler: Your Next Favourite is Here" />
+
+          <label>Hero subtitle</label>
+          <input id="stHeroSub" placeholder="Sagar Turns 30" />
+
+          <label>Hero tagline</label>
+          <textarea id="stHeroTag" rows="2"></textarea>
+
+          <label>Hero photo</label>
+          <input id="stHeroImg" type="file" accept="image/*" />
+          <div class="st-img-preview" id="stHeroPreview"></div>
+
+          <label>&ldquo;Why&rdquo; heading</label>
+          <input id="stWhyTitle" placeholder="Why Does He Exist" />
+
+          <label>&ldquo;Why&rdquo; paragraph</label>
+          <textarea id="stWhyBody" rows="7"></textarea>
+
+          <label>Closing quote</label>
+          <textarea id="stQuote" rows="3"></textarea>
+
+          <label>Quote attribution</label>
+          <input id="stQuoteBy" placeholder="Everyone who loves you" />
+
+          <button type="submit" class="admin-btn primary">✓ Save story</button>
+        </form>
+        <div class="admin-progress" id="storyProgress"></div>
+      </section>
+
+      <section class="admin-col">
+        <h3>Reasons We Love You (<span id="stReasonsCount">0</span>)</h3>
+        <input id="stReasonsTitle" class="st-inline" placeholder="Section heading" />
+        <div class="st-list" id="stReasonsList"></div>
+        <button class="admin-btn" id="stAddReason" type="button">＋ Add reason</button>
+
+        <h3 style="margin-top:26px">Frequently Asked Questions</h3>
+        <input id="stFaqTitle" class="st-inline" placeholder="Section heading" />
+        <div class="st-list" id="stFaqList"></div>
+        <button class="admin-btn" id="stAddFaq" type="button">＋ Add question</button>
+      </section>
+    </div>
+
+    <p class="admin-hint">Tip: press <kbd>Ctrl</kbd>+<kbd>A</kbd>+<kbd>S</kbd> anywhere to open/close this. Uploaded photos &amp; videos are saved in the shared store (or this browser offline).</p>
   </div>
 </div>
 

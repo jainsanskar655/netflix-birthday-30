@@ -5,6 +5,7 @@
 (function () {
   "use strict";
   var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
   var NB = window.NB;
   var pending = { video: null, thumb: null };
   var editingId = null;
@@ -17,6 +18,7 @@
     $("#admin").classList.add("open");
     document.body.style.overflow = "hidden";
     renderList();
+    loadStoryEditor();
     if (!C.rows || !C.rows.length) return;
   }
   function closeAdmin() { $("#admin").classList.remove("open"); document.body.style.overflow = ""; resetForm(); }
@@ -225,6 +227,134 @@
     NB.toast("Reset to defaults");
   }
 
+  /* ===============================================================
+     HIS STORY editor
+     =============================================================== */
+  var editReasons = [], editFaq = [], storyPending = { hero: null };
+
+  function setVal(id, v) { var e = $("#" + id); if (e) e.value = v; }
+  function setText(id, v) { var e = $("#" + id); if (e) e.textContent = v; }
+  function textVal(id) { var e = $("#" + id); return e ? e.value.trim() : ""; }
+  function attr(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
+  function escHtml(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function showPreview(id, url) { var e = $("#" + id); if (!e) return; e.style.backgroundImage = url ? "url('" + url + "')" : ""; e.classList.toggle("show", !!url); }
+
+  function loadStoryEditor() {
+    var C = NB.getContent(); if (!C) return;
+    var s = C.story || {};
+    setVal("stNav", s.navLabel || "His Story");
+    var h = s.hero || {};
+    setVal("stHeroTitle", h.title || ""); setVal("stHeroSub", h.subtitle || ""); setVal("stHeroTag", h.tagline || "");
+    showPreview("stHeroPreview", NB.picOf ? NB.picOf(h) : (h.image || ""));
+    var why = s.why || {}; setVal("stWhyTitle", why.title || ""); setVal("stWhyBody", why.body || "");
+    var q = s.quote || {}; setVal("stQuote", q.text || ""); setVal("stQuoteBy", q.by || "");
+    var rs = s.reasons || {}; setVal("stReasonsTitle", rs.title || "Reasons We Love You");
+    editReasons = (rs.items || []).map(function (r) { return Object.assign({}, r); });
+    var fq = s.faq || {}; setVal("stFaqTitle", fq.title || "Frequently Asked Questions");
+    editFaq = (fq.items || []).map(function (f) { return Object.assign({}, f); });
+    storyPending.hero = null; var hi = $("#stHeroImg"); if (hi) hi.value = "";
+    renderReasonRows(); renderFaqRows();
+    setText("storyProgress", "");
+  }
+
+  function renderReasonRows() {
+    var host = $("#stReasonsList"); if (!host) return;
+    host.innerHTML = "";
+    editReasons.forEach(function (r, i) {
+      if (!r.id) r.id = uid("r");
+      var pic = NB.picOf ? NB.picOf(r) : (r.image || "");
+      var row = document.createElement("div"); row.className = "st-row";
+      row.innerHTML =
+        '<div class="st-row-top"><div class="st-thumb"' + (pic ? ' style="background-image:url(\'' + pic + '\')"' : "") + "></div>" +
+        '<input class="st-title" placeholder="Title" value="' + attr(r.title) + '" />' +
+        '<button type="button" class="st-del">Delete</button></div>' +
+        '<textarea class="st-text" rows="2" placeholder="Why you love him…">' + escHtml(r.text || "") + "</textarea>" +
+        '<input type="file" class="st-file" accept="image/*" />';
+      row.querySelector(".st-title").oninput = function () { r.title = this.value; };
+      row.querySelector(".st-text").oninput = function () { r.text = this.value; };
+      row.querySelector(".st-file").onchange = function () {
+        var f = this.files[0]; if (!f) return;
+        r._file = f;
+        row.querySelector(".st-thumb").style.backgroundImage = "url('" + URL.createObjectURL(f) + "')";
+      };
+      row.querySelector(".st-del").onclick = function () { editReasons.splice(i, 1); renderReasonRows(); };
+      host.appendChild(row);
+    });
+    setText("stReasonsCount", editReasons.length);
+  }
+
+  function renderFaqRows() {
+    var host = $("#stFaqList"); if (!host) return;
+    host.innerHTML = "";
+    editFaq.forEach(function (f, i) {
+      if (!f.id) f.id = uid("f");
+      var row = document.createElement("div"); row.className = "st-row";
+      row.innerHTML =
+        '<div class="st-row-top"><input class="st-q" placeholder="Question" value="' + attr(f.q) + '" />' +
+        '<button type="button" class="st-del">Delete</button></div>' +
+        '<textarea class="st-a" rows="2" placeholder="Answer">' + escHtml(f.a || "") + "</textarea>";
+      row.querySelector(".st-q").oninput = function () { f.q = this.value; };
+      row.querySelector(".st-a").oninput = function () { f.a = this.value; };
+      row.querySelector(".st-del").onclick = function () { editFaq.splice(i, 1); renderFaqRows(); };
+      host.appendChild(row);
+    });
+  }
+
+  async function uploadImage(file) {
+    if (NB.isCloud && NB.isCloud()) { var r = await Cloud.upload(file); return { image: r.url, imageKey: null }; }
+    var key = uid("img"); await DB.putMedia(key, file); return { image: null, imageKey: key };
+  }
+
+  async function saveStory(e) {
+    if (e) e.preventDefault();
+    var C = NB.getContent();
+    var prog = function (t) { setText("storyProgress", t); };
+    prog("Saving story…");
+    try {
+      var s = Object.assign({}, C.story || {});
+      s.navLabel = textVal("stNav") || "His Story";
+      s.hero = Object.assign({}, s.hero || {}, { title: textVal("stHeroTitle"), subtitle: textVal("stHeroSub"), tagline: textVal("stHeroTag") });
+      if (storyPending.hero) {
+        prog("Uploading hero photo…");
+        var hr = await uploadImage(storyPending.hero);
+        s.hero.image = hr.image; s.hero.imageKey = hr.imageKey;
+      }
+      if (s.hero.image == null) delete s.hero.image;
+      if (s.hero.imageKey == null) delete s.hero.imageKey;
+      s.why = Object.assign({}, s.why || {}, { title: textVal("stWhyTitle"), body: textVal("stWhyBody") });
+      s.quote = Object.assign({}, s.quote || {}, { text: textVal("stQuote"), by: textVal("stQuoteBy") });
+
+      s.reasons = { title: textVal("stReasonsTitle") || "Reasons We Love You", items: [] };
+      for (var i = 0; i < editReasons.length; i++) {
+        var r = editReasons[i];
+        var item = { id: r.id, title: r.title || "", text: r.text || "", image: r.image || null, imageKey: r.imageKey || null };
+        if (r._file) {
+          prog("Uploading photo " + (i + 1) + " of " + editReasons.length + "…");
+          var ur = await uploadImage(r._file);
+          item.image = ur.image; item.imageKey = ur.imageKey;
+        }
+        if (item.image == null) delete item.image;
+        if (item.imageKey == null) delete item.imageKey;
+        s.reasons.items.push(item);
+      }
+      s.faq = {
+        title: textVal("stFaqTitle") || "Frequently Asked Questions",
+        items: editFaq.map(function (f) { return { id: f.id, q: f.q || "", a: f.a || "" }; })
+      };
+
+      C.story = s;
+      await NB.refreshMedia();
+      await NB.save();
+      NB.renderStory();
+      loadStoryEditor();
+      NB.toast("Story saved ✓");
+    } catch (err) {
+      console.error(err);
+      setText("storyProgress", "");
+      NB.toast("Could not save story", true);
+    }
+  }
+
   /* ---------- wiring ---------- */
   document.addEventListener("DOMContentLoaded", function () {
     $("#wishForm").addEventListener("submit", submit);
@@ -238,6 +368,24 @@
     $("#adminImportBtn").onclick = function () { $("#adminImport").click(); };
     $("#adminImport").addEventListener("change", function () { if (this.files[0]) importJSON(this.files[0]); this.value = ""; });
     $("#adminReset").onclick = resetAll;
+
+    // Story tab + editor
+    $$(".admin-tab").forEach(function (tab) {
+      tab.onclick = function () {
+        $$(".admin-tab").forEach(function (t) { t.classList.remove("active"); });
+        tab.classList.add("active");
+        var name = tab.getAttribute("data-atab");
+        $$(".admin-body").forEach(function (b) { b.classList.toggle("hidden", b.getAttribute("data-apane") !== name); });
+        if (name === "story") loadStoryEditor();
+      };
+    });
+    $("#storyForm").addEventListener("submit", saveStory);
+    $("#stHeroImg").addEventListener("change", function () {
+      storyPending.hero = this.files[0] || null;
+      if (storyPending.hero) showPreview("stHeroPreview", URL.createObjectURL(storyPending.hero));
+    });
+    $("#stAddReason").onclick = function () { editReasons.push({ id: uid("r"), title: "", text: "", image: null, imageKey: null }); renderReasonRows(); };
+    $("#stAddFaq").onclick = function () { editFaq.push({ id: uid("f"), q: "", a: "" }); renderFaqRows(); };
 
     // Ctrl + A then S  OR  Ctrl + Shift + A
     var awaiting = false, timer = null;
