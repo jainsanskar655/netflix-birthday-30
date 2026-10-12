@@ -21,21 +21,51 @@
   </div>
 </div>
 
-<!-- ============ 2. LOGIN ============ -->
-<div id="login" class="gate hidden">
-  <div class="login-bg"></div>
-  <header class="login-top"><div class="netflix-word sm">NETFLIX</div></header>
-  <main class="login-card">
-    <h1>Sign In</h1>
-    <form id="loginForm">
-      <input id="loginEmail" type="text" placeholder="Email or phone number" autocomplete="username" />
-      <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" />
-      <button type="submit" class="login-cta">Sign In</button>
-    </form>
-    <div class="login-row"><label><input type="checkbox" checked> Remember me</label><a href="#">Need help?</a></div>
-    <p class="login-signup">New to Netflix? <a href="#" id="loginSkip">Sign up now</a>.</p>
-    <p class="login-captcha">This page is protected by love to keep the birthday safe. <a href="#" id="loginSkip2">Skip →</a></p>
-  </main>
+<!-- ============ 2. HIS STORY (landing — shown right after the logo) ============ -->
+<div id="storyGate" class="gate story-gate hidden">
+  <header class="story-topbar">
+    <div class="netflix-word sm">NETFLIX</div>
+    <button class="story-close hidden" id="storyClose" title="Close">✕</button>
+  </header>
+
+  <div class="story-scroll">
+    <section class="story-hero">
+      <div class="story-hero-bg" id="storyHeroBg"></div>
+      <div class="story-collage" id="storyCollage"></div>
+      <div class="story-hero-shade"></div>
+      <div class="story-hero-copy">
+        <div class="tiny"><span class="n-badge">N</span> STORY</div>
+        <h1 class="story-hero-title" id="storyHeroTitle"></h1>
+        <div class="story-hero-sub" id="storyHeroSub"></div>
+        <p class="story-hero-tag" id="storyHeroTag"></p>
+        <div class="story-hero-cta">
+          <button class="btn-play" id="storyEnter">▶&nbsp; Who&rsquo;s watching?</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="story-wrap">
+      <section class="story-section">
+        <h2 class="story-h" id="storyWhyTitle"></h2>
+        <div class="story-body" id="storyWhyBody"></div>
+      </section>
+
+      <section class="story-section">
+        <h2 class="story-h" id="storyReasonsTitle"></h2>
+        <div class="story-grid" id="storyReasons"></div>
+      </section>
+
+      <section class="story-section">
+        <h2 class="story-h" id="storyFaqTitle"></h2>
+        <div class="story-faq" id="storyFaq"></div>
+      </section>
+
+      <section class="story-section story-quote-sec">
+        <blockquote class="story-quote" id="storyQuote"></blockquote>
+        <cite class="story-quote-by" id="storyQuoteBy"></cite>
+      </section>
+    </div>
+  </div>
 </div>
 
 <!-- ============ 3. WHO'S WATCHING ============ -->
@@ -86,45 +116,6 @@
       <button class="hero-mute" id="heroMute" title="Toggle sound">🔇</button>
     </section>
     <section class="rows" id="rows"></section>
-  </main>
-
-  <!-- ============ 4b. HIS STORY (a scrolling story page) ============ -->
-  <main id="story" class="page hidden">
-    <section class="story-hero">
-      <div class="story-hero-bg" id="storyHeroBg"></div>
-      <div class="story-hero-shade"></div>
-      <div class="story-hero-copy">
-        <div class="tiny"><span class="n-badge">N</span> STORY</div>
-        <h1 class="story-hero-title" id="storyHeroTitle"></h1>
-        <div class="story-hero-sub" id="storyHeroSub"></div>
-        <p class="story-hero-tag" id="storyHeroTag"></p>
-        <div class="story-hero-cta">
-          <button class="btn-play" id="storyCta">▶&nbsp; Start the Story</button>
-        </div>
-      </div>
-    </section>
-
-    <div class="story-wrap">
-      <section class="story-section">
-        <h2 class="story-h" id="storyWhyTitle"></h2>
-        <div class="story-body" id="storyWhyBody"></div>
-      </section>
-
-      <section class="story-section">
-        <h2 class="story-h" id="storyReasonsTitle"></h2>
-        <div class="story-grid" id="storyReasons"></div>
-      </section>
-
-      <section class="story-section">
-        <h2 class="story-h" id="storyFaqTitle"></h2>
-        <div class="story-faq" id="storyFaq"></div>
-      </section>
-
-      <section class="story-section story-quote-sec">
-        <blockquote class="story-quote" id="storyQuote"></blockquote>
-        <cite class="story-quote-by" id="storyQuoteBy"></cite>
-      </section>
-    </div>
   </main>
 
   <footer class="site-footer">
@@ -315,9 +306,10 @@
           <label>Hero tagline</label>
           <textarea id="stHeroTag" rows="2"></textarea>
 
-          <label>Hero photo</label>
-          <input id="stHeroImg" type="file" accept="image/*" />
-          <div class="st-img-preview" id="stHeroPreview"></div>
+          <label>Hero collage — photos (1 or many)</label>
+          <div class="st-list" id="stHeroImgs"></div>
+          <input id="stHeroImg" type="file" accept="image/*" multiple />
+          <p class="st-hint">Add one photo for a full-bleed hero, or several to build a collage. Leave empty to keep the gradient template.</p>
 
           <label>&ldquo;Why&rdquo; heading</label>
           <input id="stWhyTitle" placeholder="Why Does He Exist" />

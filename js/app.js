@@ -82,7 +82,7 @@
     if (cloud && !(saved && saved.library)) { try { await Cloud.save(CONTENT); } catch (e) { } }
     document.title = CONTENT.site.name + " — " + CONTENT.site.age;
     setupSplash();
-    setupLogin();
+    setupStoryGate();
     setupNav();
     setupDetail();
     setupPlayer();
@@ -98,7 +98,7 @@
     function finish() {
       if (done) return; done = true;
       splash.classList.add("fade");
-      setTimeout(function () { splash.style.display = "none"; showLogin(); }, 620);
+      setTimeout(function () { splash.style.display = "none"; showStoryGate(); }, 620);
     }
     $("#splashStart").addEventListener("click", function (e) {
       e.stopPropagation();
@@ -110,20 +110,33 @@
     splash.addEventListener("click", function () { if (splash.classList.contains("play")) finish(); });
   }
 
-  /* ---------------- login ---------------- */
-  function setupLogin() {
-    $("#loginForm").addEventListener("submit", function (e) { e.preventDefault(); showProfiles(); });
-    $("#loginSkip").addEventListener("click", function (e) { e.preventDefault(); showProfiles(); });
-    $("#loginSkip2").addEventListener("click", function (e) { e.preventDefault(); showProfiles(); });
+  /* ---------------- his story (landing gate) ---------------- */
+  function storyIsOverlay() { return !!($("#app") && !$("#app").classList.contains("hidden")); }
+  function showStoryGate() {
+    renderStory();
+    var g = $("#storyGate"); if (!g) return;
+    var overlay = storyIsOverlay();
+    var close = $("#storyClose"); if (close) close.classList.toggle("hidden", !overlay);
+    g.classList.remove("hidden");
+    g.scrollTop = 0;
+    if (overlay) document.body.style.overflow = "hidden";
   }
-  function showLogin() {
-    $("#login").classList.remove("hidden");
-    $("#loginEmail").focus();
+  function hideStoryGate() {
+    var g = $("#storyGate"); if (g) g.classList.add("hidden");
+    if (storyIsOverlay()) document.body.style.overflow = "";
+  }
+  function setupStoryGate() {
+    var enter = $("#storyEnter");
+    if (enter) enter.onclick = function () { hideStoryGate(); showProfiles(); };
+    var close = $("#storyClose");
+    if (close) close.onclick = hideStoryGate;
   }
   function showProfiles() {
-    $("#login").classList.add("hidden");
+    var g = $("#storyGate"); if (g) g.classList.add("hidden");
+    document.body.style.overflow = "";
     renderProfiles();
     $("#profiles").classList.remove("hidden");
+    window.scrollTo(0, 0);
   }
 
   /* ---------------- profiles ---------------- */
@@ -166,7 +179,7 @@
     }
     function navTo(nav) {
       activate(nav);
-      if (nav === "story") { showStory(); return; }
+      if (nav === "story") { showStoryGate(); return; }
       showHome();
       var map = { home: "continue", wishes: "new", roast: "roast", tops: "top10" };
       if (nav === "home") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
@@ -180,11 +193,10 @@
     var wm = $(".wordmark"); if (wm) wm.onclick = function (e) { e.preventDefault(); navTo("home"); };
     $("#heroPlay").onclick = function () { openPlayer(CONTENT.hero, 0); };
     $("#heroMore").onclick = function () { openDetail(CONTENT.hero); };
-    var hs = $("#heroStory"); if (hs) hs.onclick = function () { navTo("story"); };
+    var hs = $("#heroStory"); if (hs) hs.onclick = function () { showStoryGate(); };
   }
 
-  function showHome() { var s = $("#story"); if (s) s.classList.add("hidden"); $("#home").classList.remove("hidden"); }
-  function showStory() { renderStory(); $("#home").classList.add("hidden"); $("#story").classList.remove("hidden"); window.scrollTo(0, 0); }
+  function showHome() { $("#home").classList.remove("hidden"); }
 
   function renderHero() {
     var item = CONTENT.library[CONTENT.hero] || items()[0];
@@ -248,6 +260,24 @@
     });
   }
 
+  function renderCollage(host, h) {
+    if (!host) return;
+    host.className = "story-collage";
+    host.innerHTML = "";
+    var list = (h && h.images && h.images.length) ? h.images.slice() : (h && h.image ? [h] : []);
+    var urls = [];
+    list.forEach(function (im) { var u = picOf(im); if (u) urls.push(u); });
+    if (!urls.length) return;
+    host.classList.add("has");
+    host.classList.add(urls.length <= 4 ? ("n" + urls.length) : "nx");
+    urls.forEach(function (u) {
+      var d = document.createElement("div");
+      d.className = "tile";
+      d.style.backgroundImage = "url('" + u + "')";
+      host.appendChild(d);
+    });
+  }
+
   function renderStory() {
     if (!CONTENT) return;
     var link = $('.nav-links a[data-nav="story"]');
@@ -263,13 +293,8 @@
     var sub = $("#storyHeroSub"); if (sub) sub.textContent = h.subtitle || "";
     var tag = $("#storyHeroTag"); if (tag) tag.textContent = h.tagline || "";
     var bg = $("#storyHeroBg");
-    if (bg) {
-      var url = picOf(h);
-      bg.style.background = url
-        ? "linear-gradient(180deg,rgba(10,10,10,.25),rgba(10,10,10,.78)),url('" + url + "') center/cover"
-        : "linear-gradient(135deg,#2a0a0d,#0b0b0b)";
-    }
-    var cta = $("#storyCta"); if (cta) cta.onclick = function () { openPlayer(CONTENT.hero, 0); };
+    if (bg) bg.style.background = "linear-gradient(135deg,#2a0a0d,#0b0b0b)";
+    renderCollage($("#storyCollage"), h);
 
     var why = s.why || {};
     var wt = $("#storyWhyTitle"); if (wt) wt.textContent = why.title || "";
@@ -611,8 +636,11 @@
       return;
     }
     var playerOpen = $("#player").classList.contains("open");
+    var sg = $("#storyGate");
+    var storyOpen = sg && !sg.classList.contains("hidden") && storyIsOverlay();
     if (e.key === "Escape") {
       if ($("#admin").classList.contains("open")) return; // admin handles
+      if (storyOpen) { hideStoryGate(); return; }
       if (playerOpen) closePlayer();
       else if ($("#search").classList.contains("open")) { $("#search").classList.remove("open"); document.body.style.overflow = ""; }
       else if ($("#detail").classList.contains("open")) closeDetail();
@@ -640,6 +668,7 @@
     refreshMedia: buildMedia,
     renderAll: renderAll,
     renderStory: renderStory,
+    showStoryGate: showStoryGate,
     picOf: picOf,
     media: function () { return MEDIA; },
     openDetail: openDetail,

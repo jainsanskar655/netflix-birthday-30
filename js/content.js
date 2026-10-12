@@ -34,7 +34,8 @@ window.DEFAULT_CONTENT = {
       subtitle: "Sagar Turns 30",
       tagline: "The 20s were for figuring it out. The 30s are for getting rich.",
       image: null,
-      imageKey: null
+      imageKey: null,
+      images: []
     },
     why: {
       title: "Why Does He Exist",

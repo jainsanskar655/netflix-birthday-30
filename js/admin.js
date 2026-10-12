@@ -230,14 +230,13 @@
   /* ===============================================================
      HIS STORY editor
      =============================================================== */
-  var editReasons = [], editFaq = [], storyPending = { hero: null };
+  var editReasons = [], editFaq = [], editHeroImgs = [];
 
   function setVal(id, v) { var e = $("#" + id); if (e) e.value = v; }
   function setText(id, v) { var e = $("#" + id); if (e) e.textContent = v; }
   function textVal(id) { var e = $("#" + id); return e ? e.value.trim() : ""; }
   function attr(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;"); }
   function escHtml(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-  function showPreview(id, url) { var e = $("#" + id); if (!e) return; e.style.backgroundImage = url ? "url('" + url + "')" : ""; e.classList.toggle("show", !!url); }
 
   function loadStoryEditor() {
     var C = NB.getContent(); if (!C) return;
@@ -245,16 +244,38 @@
     setVal("stNav", s.navLabel || "His Story");
     var h = s.hero || {};
     setVal("stHeroTitle", h.title || ""); setVal("stHeroSub", h.subtitle || ""); setVal("stHeroTag", h.tagline || "");
-    showPreview("stHeroPreview", NB.picOf ? NB.picOf(h) : (h.image || ""));
+    editHeroImgs = (h.images && h.images.length)
+      ? h.images.map(function (x) { return Object.assign({}, x); })
+      : (h.image ? [{ image: h.image, imageKey: h.imageKey }] : []);
+    renderHeroImgRows();
     var why = s.why || {}; setVal("stWhyTitle", why.title || ""); setVal("stWhyBody", why.body || "");
     var q = s.quote || {}; setVal("stQuote", q.text || ""); setVal("stQuoteBy", q.by || "");
     var rs = s.reasons || {}; setVal("stReasonsTitle", rs.title || "Reasons We Love You");
     editReasons = (rs.items || []).map(function (r) { return Object.assign({}, r); });
     var fq = s.faq || {}; setVal("stFaqTitle", fq.title || "Frequently Asked Questions");
     editFaq = (fq.items || []).map(function (f) { return Object.assign({}, f); });
-    storyPending.hero = null; var hi = $("#stHeroImg"); if (hi) hi.value = "";
+    var hi = $("#stHeroImg"); if (hi) hi.value = "";
     renderReasonRows(); renderFaqRows();
     setText("storyProgress", "");
+  }
+
+  function renderHeroImgRows() {
+    var host = $("#stHeroImgs"); if (!host) return;
+    host.innerHTML = "";
+    if (!editHeroImgs.length) {
+      host.innerHTML = '<p class="st-empty">No photos yet — the gradient template shows instead.</p>';
+      return;
+    }
+    editHeroImgs.forEach(function (im, i) {
+      var url = im._file ? URL.createObjectURL(im._file) : (NB.picOf ? NB.picOf(im) : (im.image || ""));
+      var row = document.createElement("div"); row.className = "st-row st-imgrow";
+      row.innerHTML =
+        '<div class="st-thumb"' + (url ? ' style="background-image:url(\'' + url + '\')"' : "") + "></div>" +
+        '<span class="st-imgnote">' + (im._file ? ("New — " + escHtml(im._file.name || "photo")) : ("Photo " + (i + 1))) + "</span>" +
+        '<button type="button" class="st-del">Remove</button>';
+      row.querySelector(".st-del").onclick = function () { editHeroImgs.splice(i, 1); renderHeroImgRows(); };
+      host.appendChild(row);
+    });
   }
 
   function renderReasonRows() {
@@ -314,13 +335,22 @@
       var s = Object.assign({}, C.story || {});
       s.navLabel = textVal("stNav") || "His Story";
       s.hero = Object.assign({}, s.hero || {}, { title: textVal("stHeroTitle"), subtitle: textVal("stHeroSub"), tagline: textVal("stHeroTag") });
-      if (storyPending.hero) {
-        prog("Uploading hero photo…");
-        var hr = await uploadImage(storyPending.hero);
-        s.hero.image = hr.image; s.hero.imageKey = hr.imageKey;
+      var heroImgs = [];
+      for (var hk = 0; hk < editHeroImgs.length; hk++) {
+        var im = editHeroImgs[hk];
+        var ho = { image: im.image || null, imageKey: im.imageKey || null };
+        if (im._file) {
+          prog("Uploading hero photo " + (hk + 1) + " of " + editHeroImgs.length + "…");
+          var hur = await uploadImage(im._file);
+          ho.image = hur.image; ho.imageKey = hur.imageKey;
+        }
+        if (ho.image == null) delete ho.image;
+        if (ho.imageKey == null) delete ho.imageKey;
+        heroImgs.push(ho);
       }
-      if (s.hero.image == null) delete s.hero.image;
-      if (s.hero.imageKey == null) delete s.hero.imageKey;
+      s.hero.images = heroImgs;
+      delete s.hero.image;
+      delete s.hero.imageKey;
       s.why = Object.assign({}, s.why || {}, { title: textVal("stWhyTitle"), body: textVal("stWhyBody") });
       s.quote = Object.assign({}, s.quote || {}, { text: textVal("stQuote"), by: textVal("stQuoteBy") });
 
@@ -381,8 +411,9 @@
     });
     $("#storyForm").addEventListener("submit", saveStory);
     $("#stHeroImg").addEventListener("change", function () {
-      storyPending.hero = this.files[0] || null;
-      if (storyPending.hero) showPreview("stHeroPreview", URL.createObjectURL(storyPending.hero));
+      Array.prototype.slice.call(this.files || []).forEach(function (f) { editHeroImgs.push({ _file: f, image: null, imageKey: null }); });
+      this.value = "";
+      renderHeroImgRows();
     });
     $("#stAddReason").onclick = function () { editReasons.push({ id: uid("r"), title: "", text: "", image: null, imageKey: null }); renderReasonRows(); };
     $("#stAddFaq").onclick = function () { editFaq.push({ id: uid("f"), q: "", a: "" }); renderFaqRows(); };
