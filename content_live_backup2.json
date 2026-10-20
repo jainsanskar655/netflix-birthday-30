@@ -1,0 +1,229 @@
+﻿{
+    "site":  {
+                 "name":  "Sagar",
+                 "age":  30,
+                 "birthday":  "20 October 2026"
+             },
+    "intro":  "assets/videos/netflix-intro.mp4",
+    "profiles":  [
+                     {
+                         "id":  "sagar",
+                         "name":  "Sagar",
+                         "initial":  "S",
+                         "color":  "linear-gradient(135deg,#e50914,#7a060b)"
+                     },
+                     {
+                         "id":  "family",
+                         "name":  "Mom \u0026 Dad",
+                         "initial":  "M",
+                         "color":  "linear-gradient(135deg,#f5c542,#c98a12)"
+                     },
+                     {
+                         "id":  "friends",
+                         "name":  "Best Friends",
+                         "initial":  "B",
+                         "color":  "linear-gradient(135deg,#2ecc71,#14743b)"
+                     },
+                     {
+                         "id":  "loved",
+                         "name":  "Favourites",
+                         "initial":  "â\u0085",
+                         "color":  "linear-gradient(135deg,#9b59b6,#5b2c6f)"
+                     }
+                 ],
+    "hero":  "main",
+    "story":  {
+                  "navLabel":  "His Story",
+                  "hero":  {
+                               "title":  "Spoiler: Your Next Favourite is Here",
+                               "subtitle":  "Sagar Turns 30",
+                               "tagline":  "The 20s were for figuring it out. The 30s are for getting rich.",
+                               "image":  null,
+                               "imageKey":  null,
+                               "images":  ""
+                           },
+                  "why":  {
+                              "title":  "Why Does He Exist",
+                              "body":  "Thirty years of stories, adventures, friendships, chaos, laughter and countless moments that made you who you are today. The 20s were all about figuring things out â making mistakes, finding your people, chasing dreams and creating memories along the way.\n\nBut now comes the exciting part: your 30s. The decade where the hard work starts paying off, the dreams get bigger, the bank balance gets happier, and life finally starts feeling a little more like the life you imagined.\n\nHere\u0027s to more love, more laughter, more adventures, more money, and a whole lot of unforgettable stories. The trailer was great, but the best part of your story is just beginning."
+                          },
+                  "reasons":  {
+                                  "title":  "Reasons We Love You",
+                                  "items":  "   "
+                              },
+                  "faq":  {
+                              "title":  "Frequently Asked Questions",
+                              "items":  "   "
+                          },
+                  "quote":  {
+                                "text":  "Some people spend 30 years becoming a better version of themselves. You spent 30 years becoming impossible to replace.",
+                                "by":  "Everyone who loves you"
+                            }
+              },
+    "rows":  [
+                 {
+                     "id":  "continue",
+                     "title":  "Continue Watching for Sagar",
+                     "type":  "cards",
+                     "itemIds":  "main w1 w2 w3 w4"
+                 },
+                 {
+                     "id":  "new",
+                     "title":  "New Birthday Wishes",
+                     "type":  "cards",
+                     "itemIds":  "w5 w6 w7 w8 w1 w3"
+                 },
+                 {
+                     "id":  "because",
+                     "title":  "Because apparently 30 years wasn\u0027t enough",
+                     "type":  "cards",
+                     "itemIds":  "w2 w4 w5 w7 main"
+                 },
+                 {
+                     "id":  "top10",
+                     "title":  "Top 10 in Sagar\u0027s Life",
+                     "type":  "ranked",
+                     "itemIds":  "main w1 w5 w2 w3 w6 w7 w4 w8 w1"
+                 },
+                 {
+                     "id":  "roast",
+                     "title":  "The Roast â Not For The Faint Hearted",
+                     "type":  "cards",
+                     "itemIds":  "w3 w7 w8 w6"
+                 },
+                 {
+                     "id":  "only",
+                     "title":  "Only on N",
+                     "type":  "cards",
+                     "itemIds":  "w5 w4 w2 w8"
+                 }
+             ],
+    "library":  {
+                    "main":  {
+                                 "id":  "main",
+                                 "badge":  "N SERIES",
+                                 "title":  "Sagar: The 30th Season",
+                                 "from":  "A Netflix Birthday Original",
+                                 "description":  "Thirty years. A thousand stories. One ridiculously special main character. A celebration of a life worth binge-watching â press play and let the memories roll.",
+                                 "hue":  355,
+                                 "genres":  "Biography Comedy Drama Wholesome",
+                                 "starring":  "Sagar Everyone who loves him",
+                                 "creator":  "The People Who Know Him Best",
+                                 "year":  2026,
+                                 "maturity":  "30",
+                                 "match":  100,
+                                 "episodes":  "  "
+                             },
+                    "w1":  {
+                               "id":  "w1",
+                               "badge":  "N FILM",
+                               "title":  "A Message From Mom \u0026 Dad",
+                               "from":  "Family",
+                               "hue":  45,
+                               "description":  "From the two people who knew you before you could even walk. A few tears, a lot of love, and one very proud pair of parents.",
+                               "genres":  "Family Emotional",
+                               "starring":  "Mom Dad",
+                               "year":  2026,
+                               "maturity":  "U",
+                               "match":  99,
+                               "episodes":  ""
+                           },
+                    "w2":  {
+                               "id":  "w2",
+                               "badge":  "N FILM",
+                               "title":  "30 Years of Chaos",
+                               "from":  "Best Friends",
+                               "hue":  150,
+                               "description":  "Friendship, questionable decisions and stories that should probably never have made it to the internet. Consider this payback.",
+                               "genres":  "Comedy Friendship",
+                               "starring":  "The Group Chat",
+                               "year":  2026,
+                               "maturity":  "18",
+                               "match":  97,
+                               "episodes":  ""
+                           },
+                    "w3":  {
+                               "id":  "w3",
+                               "badge":  "N FILM",
+                               "title":  "The Roast",
+                               "from":  "Everyone",
+                               "hue":  5,
+                               "description":  "Because love without a little humiliation isn\u0027t really friendship. Sit down, Sagar â this one\u0027s going to sting.",
+                               "genres":  "Comedy Roast",
+                               "starring":  "Your So-Called Friends",
+                               "year":  2026,
+                               "maturity":  "18",
+                               "match":  98,
+                               "episodes":  ""
+                           },
+                    "w4":  {
+                               "id":  "w4",
+                               "badge":  "N FILM",
+                               "title":  "My Favourite Person",
+                               "from":  "The One Who Loves You Most",
+                               "hue":  320,
+                               "description":  "A little something from the person who thinks about you a ridiculous amount. Warning: feelings ahead.",
+                               "genres":  "Romance Emotional",
+                               "starring":  "Someone very lucky",
+                               "year":  2026,
+                               "maturity":  "U",
+                               "match":  100,
+                               "episodes":  ""
+                           },
+                    "w5":  {
+                               "id":  "w5",
+                               "badge":  "N FILM",
+                               "title":  "The People Who Know You Best",
+                               "from":  "Friends",
+                               "hue":  200,
+                               "description":  "Messages from the people who have been there through it all â the highs, the lows and the truly embarrassing.",
+                               "genres":  "Documentary Friendship",
+                               "starring":  "The Whole Gang",
+                               "year":  2026,
+                               "maturity":  "U",
+                               "match":  96,
+                               "episodes":  ""
+                           },
+                    "w6":  {
+                               "id":  "w6",
+                               "badge":  "N FILM",
+                               "title":  "One More For The Memories",
+                               "from":  "Friends",
+                               "hue":  260,
+                               "description":  "Because one birthday message was clearly never going to be enough. Turn the volume up for this one.",
+                               "genres":  "Comedy",
+                               "starring":  "Everyone",
+                               "year":  2026,
+                               "maturity":  "U",
+                               "match":  95,
+                               "episodes":  ""
+                           },
+                    "w7":  {
+                               "id":  "w7",
+                               "badge":  "N FILM",
+                               "title":  "That Legendary Trip",
+                               "from":  "Friends",
+                               "hue":  30,
+                               "description":  "You know the one. The trip we still argue about to this day. Relive it in glorious high definition.",
+                               "genres":  "Adventure Comedy",
+                               "starring":  "The Usual Suspects",
+                               "year":  2026,
+                               "maturity":  "U",
+                               "match":  94,
+                               "episodes":  ""
+                           },
+                    "w8":  {
+                               "id":  "w8",
+                               "badge":  "N FILM",
+                               "title":  "The Embarrassing Phase",
+                               "from":  "Family",
+                               "hue":  90,
+                               "description":  "We found the photos. We\u0027re not going to elaborate. Happy birthday, superstar.",
+                               "genres":  "Documentary Comedy",
+                               "starring":  "Unfortunate younger you",
+                               "year":  2026,
+                               "maturity":  "18",
+                               "match":  93,
+                               "episodes":  ""
+                           }
+                }
+}
